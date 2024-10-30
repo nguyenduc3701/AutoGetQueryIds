@@ -33,10 +33,16 @@
 - ✅ Auto open and get query ids in telegram application.
 - ✅ Auto write result to specific folder in `data.txt`.
 - ✅ Auto rerun after 24 hours.
+- ✅ Auto open file run.bat in application folder.
 
 ## Update history
 
 <details>
-<summary>v0.1 - 📅 39/10/2024</summary>
+<summary>v0.1 - 📅 29/10/2024</summary>
 - Provide resources for a preliminary look.
+</details>
+
+<details>
+<summary>v0.1.1 - 📅 31/10/2024</summary>
+- New functional auto open file run.bat in application folder.
 </details>

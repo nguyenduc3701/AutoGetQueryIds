@@ -4,9 +4,12 @@ const figlet = require("figlet");
 const { chromium } = require("playwright");
 const { applications, Local, Cookie } = require("./config");
 const path = require("path");
+const { exec } = require("child_process");
 
 class AutoGetQueryIds {
-  constructor() {}
+  constructor() {
+    this.commands = [];
+  }
 
   renderFiglet(name, version) {
     figlet(`${name} Tools by Nguyen Duc`, function (err, data) {
@@ -192,20 +195,51 @@ class AutoGetQueryIds {
       if (fs.existsSync(queryPath)) {
         fs.writeFileSync(queryPath, newQueryIds, "utf8");
         this.log(colors.green(`Updated "query.txt" in "${targetFolder}".`));
+        await this.commands.push(
+          `new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`
+        );
+        await this.sleep(1000);
       } else if (fs.existsSync(dataPath)) {
         fs.writeFileSync(dataPath, newQueryIds, "utf8");
         this.log(colors.green(`Updated "data.txt" in "${targetFolder}".`));
+        await this.commands.push(
+          `new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`
+        );
+        await this.sleep(1000);
       } else {
         fs.writeFileSync(dataPath, newQueryIds, "utf8");
         this.log(colors.green(`Created "data.txt" in "${targetFolder}".`));
+        await this.commands.push(
+          `new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`
+        );
+        await this.sleep(1000);
       }
     } catch (error) {
       this.log(colors.red(`Error writing data to file: ${error.message}`));
     }
   };
 
+  openPowerShellToRunBot = async () => {
+    // await this.commands.push(`"${terminalPath}" new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`)
+    this.log(
+      colors.yellow(`====== [Open Window Powershell and run tools] ======`)
+    );
+    const terminalPath =
+      "D:\\Setup\\Microsoft.WindowsTerminalPreview_1.22.2702.0_x64\\terminal-1.22.2702.0\\WindowsTerminal.exe";
+    if (this.commands.length) {
+      const commands = this.commands.join("; ");
+      console.log(`"${terminalPath}" ${commands}`);
+      await exec(`"${terminalPath}" ${commands}`, (error) => {
+        if (error) {
+          this.log(colors.red(`Error opening PowerShell: ${error.message}`));
+        }
+        this.log(colors.green(`PowerShell opened`));
+      });
+    }
+  };
+
   async main() {
-    await this.renderFiglet(`AutoGetQueryIds`, 0.1);
+    await this.renderFiglet(`AutoGetQueryIds`, `0.1.1`);
     while (true) {
       for (let i = 0; i < applications.length; i++) {
         this.log(
@@ -243,6 +277,7 @@ class AutoGetQueryIds {
         await browser.close();
         await this.sleep(3000);
       }
+      await this.openPowerShellToRunBot();
       this.log(colors.cyan(`Get query_id done! Wait 24h to rerun...`));
       await this.sleep(24 * 60 * 60 * 1000);
     }

@@ -12,6 +12,7 @@
   "dependencies": {
     "@playwright/test": "^1.48.2",
     "autogetqueryids": "file:",
+    "child_process": "^1.0.2",
     "colors": "^1.4.0",
     "figlet": "^1.8.0",
     "fs": "^0.0.1-security",
