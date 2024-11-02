@@ -108,19 +108,17 @@ class AutoGetQueryIds {
   };
 
   openApplicationInBrowser = async (page) => {
-    this.log(colors.yellow(`====== [Open iframe] ======`));
+    this.log(colors.yellow(`====== [Open miniApp] ======`));
 
     const divSelector = "div.new-message-bot-commands.is-view";
     await page.waitForSelector(divSelector);
     await page.click(divSelector);
-
-    await page.waitForTimeout(10000);
+    await page.waitForTimeout(5000);
 
     const buttonSelector = "button.popup-button.btn.primary.rp";
     await page.waitForSelector(buttonSelector);
     await page.click(buttonSelector);
-
-    await page.waitForTimeout(15000);
+    await page.waitForTimeout(5000);
   };
 
   getBaseUrl = (url) => {
@@ -174,7 +172,7 @@ class AutoGetQueryIds {
         colors.red(`Iframe could not be found after ${maxRetries} attempts.`)
       );
     } else {
-      this.log(colors.green(`Iframe found successfully!`));
+      this.log(colors.green(`Open MiniApp successfully!`));
     }
 
     return iframe;
@@ -191,28 +189,27 @@ class AutoGetQueryIds {
 
     try {
       this.log(colors.green(`Checking files in folder "${name}"...`));
-
       if (fs.existsSync(queryPath)) {
         fs.writeFileSync(queryPath, newQueryIds, "utf8");
-        this.log(colors.green(`Updated "query.txt" in "${targetFolder}".`));
         await this.commands.push(
           `new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`
         );
         await this.sleep(1000);
+        this.log(colors.green(`Updated "query.txt" in "${targetFolder}".`));
       } else if (fs.existsSync(dataPath)) {
         fs.writeFileSync(dataPath, newQueryIds, "utf8");
-        this.log(colors.green(`Updated "data.txt" in "${targetFolder}".`));
         await this.commands.push(
           `new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`
         );
         await this.sleep(1000);
+        this.log(colors.green(`Updated "data.txt" in "${targetFolder}".`));
       } else {
         fs.writeFileSync(dataPath, newQueryIds, "utf8");
-        this.log(colors.green(`Created "data.txt" in "${targetFolder}".`));
         await this.commands.push(
           `new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`
         );
         await this.sleep(1000);
+        this.log(colors.green(`Created "data.txt" in "${targetFolder}".`));
       }
     } catch (error) {
       this.log(colors.red(`Error writing data to file: ${error.message}`));
@@ -220,7 +217,6 @@ class AutoGetQueryIds {
   };
 
   openPowerShellToRunBot = async () => {
-    // await this.commands.push(`"${terminalPath}" new-tab -d "${targetFolder}" -p "Windows PowerShell" --title "${name}" -noExit "${targetFolder}\\run.bat"`)
     this.log(
       colors.yellow(`====== [Open Window Powershell and run tools] ======`)
     );
@@ -228,7 +224,6 @@ class AutoGetQueryIds {
       "D:\\Setup\\Microsoft.WindowsTerminalPreview_1.22.2702.0_x64\\terminal-1.22.2702.0\\WindowsTerminal.exe";
     if (this.commands.length) {
       const commands = this.commands.join("; ");
-      console.log(`"${terminalPath}" ${commands}`);
       await exec(`"${terminalPath}" ${commands}`, (error) => {
         if (error) {
           this.log(colors.red(`Error opening PowerShell: ${error.message}`));
@@ -236,6 +231,7 @@ class AutoGetQueryIds {
         this.log(colors.green(`PowerShell opened`));
       });
     }
+    await this.sleep(3000);
   };
 
   async main() {
@@ -243,6 +239,12 @@ class AutoGetQueryIds {
     while (true) {
       for (let i = 0; i < applications.length; i++) {
         const app = applications[i];
+        await this.sleep(3000);
+        this.log(
+          colors.cyan(
+            `----------------------=============----------------------`
+          )
+        );
         this.log(
           colors.cyan(`Working with aplication #${i + 1} | ${app.name}`)
         );
