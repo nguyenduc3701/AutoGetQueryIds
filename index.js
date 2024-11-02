@@ -187,7 +187,7 @@ class AutoGetQueryIds {
     const targetFolder = path.join(rootPath, name);
     const dataPath = path.join(targetFolder, "data.txt");
     const queryPath = path.join(targetFolder, "query.txt");
-    const newQueryIds = queryIds.join("\n");
+    const newQueryIds = queryIds.filter((i) => i !== null).join("\n");
 
     try {
       this.log(colors.green(`Checking files in folder "${name}"...`));
@@ -242,13 +242,11 @@ class AutoGetQueryIds {
     await this.renderFiglet(`AutoGetQueryIds`, `0.1.1`);
     while (true) {
       for (let i = 0; i < applications.length; i++) {
+        const app = applications[i];
         this.log(
-          colors.cyan(
-            `Working with aplication #${i + 1} | ${applications.name}`
-          )
+          colors.cyan(`Working with aplication #${i + 1} | ${app.name}`)
         );
         const browser = await chromium.launch({ headless: false });
-        const app = applications[i];
         let page = await this.openBrowser(browser, app.url);
         await page.waitForTimeout(1000);
         if (page) {
@@ -256,7 +254,17 @@ class AutoGetQueryIds {
           const iframe = await this.findIframeElement(page);
           if (iframe) {
             const result = await iframe.evaluate(() => {
-              if (Telegram.WebApp.initData) {
+              if (sessionStorage.getItem("telegram-apps/launch-params")) {
+                const params = new URLSearchParams(
+                  sessionStorage.getItem("telegram-apps/launch-params")
+                );
+                let tgWebAppDataStr = null;
+                if (params.has("tgWebAppData")) {
+                  tgWebAppDataStr = params.get("tgWebAppData");
+                }
+                return tgWebAppDataStr;
+              }
+              if (Telegram?.WebApp?.initData) {
                 return Telegram.WebApp.initData;
               }
               return null;

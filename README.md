@@ -20,7 +20,8 @@
     "name": "BahneAiBot", //name folder
     "rootPath": "D:\\Works\\Tools", // location of folder
     "url": "https://web.telegram.org/k/#@BahneAIBot", //url chat bot
-    "queryIds": [] //leave this emptry
+    "queryIds": [], //leave this emptry
+    "getFromSession": "telegram-apps/launch-params" //If copy(Telegram.WebApp.initData) does not work, you should enter Application -> Session Storage, locate the key that contains the query id, and push the key name here.
   }
   ```
 
